@@ -128,7 +128,6 @@ def test_atomic_add_src_scope_violation_raises():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.low_priority
 def test_atomic_add_dtype_mismatch_raises():
     """dst and src dtype must match; mismatch should raise at compile time."""
 
@@ -148,13 +147,12 @@ def test_atomic_add_dtype_mismatch_raises():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.low_priority
 @pytest.mark.parametrize(
     "dtype,target",
     [
         ("uint16", "pto"),
-        ("uint32", "pto"),
-        ("int8", "ascendc"),
+        pytest.param("uint32", "pto", marks=pytest.mark.low_priority),
+        pytest.param("int8", "ascendc", marks=pytest.mark.low_priority),
     ],
 )
 def test_atomic_add_unsupported_dtype_raises(dtype, target):
