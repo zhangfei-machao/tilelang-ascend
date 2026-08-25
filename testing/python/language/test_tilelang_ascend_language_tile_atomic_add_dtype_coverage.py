@@ -77,6 +77,7 @@ def _run_and_check(program, shape, dtype, num_blocks, target):
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.low_priority
 @pytest.mark.skipif(
     not (hasattr(torch, "npu") and torch.npu.is_available()),
     reason="tile atomic_add correctness requires an Ascend NPU runtime",
@@ -127,6 +128,7 @@ def test_atomic_add_src_scope_violation_raises():
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.low_priority
 def test_atomic_add_dtype_mismatch_raises():
     """dst and src dtype must match; mismatch should raise at compile time."""
 
@@ -146,6 +148,7 @@ def test_atomic_add_dtype_mismatch_raises():
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.low_priority
 @pytest.mark.parametrize(
     "dtype,target",
     [
