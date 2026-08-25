@@ -78,9 +78,16 @@ def _run_atomic_add_case(program, shape, dtype, num_blocks, target):
     not (hasattr(torch, "npu") and torch.npu.is_available()),
     reason="tile atomic_add correctness requires an Ascend NPU runtime",
 )
-@pytest.mark.parametrize("target", ["ascendc", "pto"])
-@pytest.mark.parametrize("dtype", ["float32", "float16"])
-def test_tile_atomic_add_1d_accumulates_multiple_blocks_after_zeroing_gm(target, dtype):
+@pytest.mark.parametrize(
+    "dtype,target",
+    [
+        ("float32", "ascendc"),
+        ("float32", "pto"),
+        pytest.param("float16", "ascendc", marks=pytest.mark.low_priority),
+        pytest.param("float16", "pto", marks=pytest.mark.low_priority),
+    ],
+)
+def test_tile_atomic_add_1d_accumulates_multiple_blocks_after_zeroing_gm(dtype, target):
     num_blocks = 4
     tile_n = 32
     program = _tile_atomic_add_1d_kernel(
@@ -95,7 +102,13 @@ def test_tile_atomic_add_1d_accumulates_multiple_blocks_after_zeroing_gm(target,
     not (hasattr(torch, "npu") and torch.npu.is_available()),
     reason="tile atomic_add correctness requires an Ascend NPU runtime",
 )
-@pytest.mark.parametrize("target", ["ascendc", "pto"])
+@pytest.mark.parametrize(
+    "target",
+    [
+        "ascendc",
+        pytest.param("pto", marks=pytest.mark.low_priority),
+    ],
+)
 def test_tile_atomic_add_2d_region_accumulates_multiple_blocks_after_zeroing_gm(target):
     num_blocks = 4
     tile_m, tile_n = 4, 32

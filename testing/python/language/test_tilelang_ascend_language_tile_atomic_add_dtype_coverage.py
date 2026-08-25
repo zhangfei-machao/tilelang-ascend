@@ -77,12 +77,17 @@ def _run_and_check(program, shape, dtype, num_blocks, target):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.low_priority
 @pytest.mark.skipif(
     not (hasattr(torch, "npu") and torch.npu.is_available()),
     reason="tile atomic_add correctness requires an Ascend NPU runtime",
 )
-@pytest.mark.parametrize("target", ["ascendc", "pto"])
+@pytest.mark.parametrize(
+    "target",
+    [
+        "ascendc",
+        pytest.param("pto", marks=pytest.mark.low_priority),
+    ],
+)
 def test_atomic_add_int32_1d(target):
     num_blocks = 4
     tile_n = 32
