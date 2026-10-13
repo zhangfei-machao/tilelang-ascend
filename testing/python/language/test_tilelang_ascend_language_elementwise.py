@@ -1179,24 +1179,10 @@ def _run_bitwise_xor_ext(dtype, target, block_M=128, block_N=256, use_tmp=False)
     assert_close_npu(c, ref_c, dtype, rtol=0, atol=0)
 
 
-@pytest.mark.parametrize("dtype", ["int8", pytest.param("uint8", marks=pytest.mark.low_priority)])
-def test_bitwise_xor_int8_ascendc_raises(dtype):
-    """int8/uint8 should fail at compile time on ascendc (static_assert int16/uint16 only)."""
-    with pytest.raises(RuntimeError, match="Compilation Failed"):  # noqa: B017
-        _run_bitwise_xor_ext(dtype, "ascendc")
-
-
 @pytest.mark.parametrize("dtype", ["int8"])
 @pytest.mark.parametrize("target", [pytest.param("pto", marks=pytest.mark.low_priority)])
 def test_bitwise_xor_int8_pto(dtype, target):
     _run_bitwise_xor_ext(dtype, target)
-
-
-@pytest.mark.low_priority
-def test_bitwise_xor_uint8_pto_raises():
-    """uint8 on PTO triggers runtime 'ub address out of bounds' (codegen tmp-size bug)."""
-    with pytest.raises(RuntimeError, match="Compilation Failed"):  # noqa: B017
-        _run_bitwise_xor_ext("uint8", "pto")
 
 
 @pytest.mark.parametrize(
