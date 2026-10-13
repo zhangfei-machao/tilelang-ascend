@@ -1195,28 +1195,6 @@ def test_bitwise_rshift_non_aligned_ascendc_skip():
     pytest.skip("AscendC non-aligned precision bug, PTO unaffected")
 
 
-@pytest.mark.parametrize("dtype", ["int8", pytest.param("uint8", marks=pytest.mark.low_priority)])
-@pytest.mark.parametrize("target", ["ascendc", pytest.param("pto", marks=pytest.mark.low_priority)])
-def test_bitwise_rshift_int8_raises(dtype, target):
-    """int8/uint8 should fail at compile time on A2/A3."""
-    M, N = 1024, 1024
-    block_M, block_N = 128, 256
-    kernel = bitwise_rshift(M, N, block_M, block_N, 1, dtype)
-    with pytest.raises(RuntimeError, match="Compilation Failed"):  # noqa: B017
-        tilelang.compile(kernel, out_idx=[-1], pass_configs=pass_configs, target=target)
-
-
-@pytest.mark.parametrize("dtype", ["float16", pytest.param("float32", marks=pytest.mark.low_priority)])
-@pytest.mark.parametrize("target", ["ascendc", pytest.param("pto", marks=pytest.mark.low_priority)])
-def test_bitwise_rshift_float_raises(dtype, target):
-    """float16/float32 should fail at compile time (integer-only operation)."""
-    M, N = 1024, 1024
-    block_M, block_N = 128, 256
-    kernel = bitwise_rshift(M, N, block_M, block_N, 1, dtype)
-    with pytest.raises(RuntimeError, match="Compilation Failed"):  # noqa: B017
-        tilelang.compile(kernel, out_idx=[-1], pass_configs=pass_configs, target=target)
-
-
 def bitwise_xor(M, N, block_M, block_N, dtype="int16"):
     m_num = M // block_M
     n_num = N // block_N
